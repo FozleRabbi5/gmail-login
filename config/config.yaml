@@ -1,0 +1,85 @@
+# ============================================================
+# Login Tester - Configuration
+# ============================================================
+# IMPORTANT: Only use this tool against web applications that
+# you own or have explicit authorization to test.
+# ============================================================
+
+# --- Target Login Page ---
+login_url: "https://accounts.google.com/signin"
+
+# CSS selectors for the login form elements
+username_selector: "input[type='email']"
+password_selector: "input[type='password']"
+submit_selector: "#identifierNext, #passwordNext"
+
+# Some login flows are multi-step (e.g., Google: email first, then password)
+multi_step_login: true
+
+# --- Login Detection ---
+# Success indicators: if ANY of these match after login, it's considered successful
+success_indicators:
+  url_patterns:
+    - "myaccount.google.com"
+    - "mail.google.com"
+    - "accounts.google.com/signin/v2/challenge"
+  page_titles:
+    - "Gmail"
+    - "Google Account"
+  dom_selectors:
+    - "[data-ogsr-up]"
+    - "a[href*='SignOutOptions']"
+
+# Failure indicators: if ANY of these match, it's considered a failure
+failure_indicators:
+  url_patterns:
+    - "accounts.google.com/signin/v2/identifier"
+  page_titles: []
+  dom_selectors:
+    - "[jsname='B34EJ']"
+    - ".o6cuMc"
+    - "div[aria-live='assertive']"
+  text_patterns:
+    - "Wrong password"
+    - "Couldn't find your Google Account"
+    - "couldn't sign you in"
+
+# --- Browser Settings ---
+browser_type: "chromium"  # chromium, firefox, webkit
+headless: true
+worker_count: 5
+timeout: 30  # seconds per login attempt
+retry_count: 2
+
+# Viewport settings
+viewport_width: 1280
+viewport_height: 720
+
+# --- Performance ---
+# Max queue size (bounds memory usage)
+queue_max_size: 1000
+
+# Checkpoint interval in seconds
+checkpoint_interval: 30
+
+# --- Credentials ---
+credentials_file: "config/credentials.txt"
+
+# --- Output ---
+output_directory: "results"
+result_categories:
+  - "success"
+  - "failure"
+  - "error"
+  - "timeout"
+  - "captcha"
+  - "locked"
+
+# --- Logging ---
+log_level: "INFO"
+log_directory: "logs"
+log_max_size: "10 MB"
+log_rotation: 5  # number of backup files
+
+# --- Resource Limits ---
+max_memory_mb: 2048  # restart browser if memory exceeds this
