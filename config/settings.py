@@ -113,7 +113,14 @@ class Settings(BaseModel):
     output_directory: str = Field(default="results")
     result_categories: list[str] = Field(
         default_factory=lambda: [
-            "success", "failure", "error", "timeout", "captcha", "locked"
+            "success",
+            "failure",
+            "disabled",
+            "changepassword",
+            "error",
+            "timeout",
+            "captcha",
+            "locked",
         ],
     )
 

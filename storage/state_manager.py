@@ -29,6 +29,8 @@ class ApplicationState:
     # Result counts
     success_count: int = 0
     failure_count: int = 0
+    disabled_count: int = 0
+    changepassword_count: int = 0
     error_count: int = 0
     timeout_count: int = 0
     captcha_count: int = 0

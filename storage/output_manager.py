@@ -77,9 +77,13 @@ class OutputManager:
             line_number: Source line number in credentials file.
             extra_info: Optional additional information.
         """
+        metadata = f"line={line_number}"
+        if extra_info:
+            metadata = f"{metadata} | {extra_info}"
+
         # Write result to file
         await self.result_writer.write_with_timestamp(
-            category, username, password, extra_info
+            category, username, password, metadata
         )
 
         # Update state

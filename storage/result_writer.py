@@ -24,7 +24,7 @@ class ResultWriter:
     Each category (success, failure, error, etc.) gets its own file.
     All writes are protected by an asyncio.Lock for concurrency safety.
 
-    Output format: username:password (one per line)
+    Output format: one redacted result per line, with optional metadata.
     """
 
     def __init__(
@@ -34,7 +34,14 @@ class ResultWriter:
     ) -> None:
         self.output_dir = Path(output_directory)
         self.categories = categories or [
-            "success", "failure", "error", "timeout", "captcha", "locked"
+            "success",
+            "failure",
+            "disabled",
+            "changepassword",
+            "error",
+            "timeout",
+            "captcha",
+            "locked",
         ]
         self._locks: dict[str, asyncio.Lock] = {}
         self._write_counts: dict[str, int] = {}
@@ -77,17 +84,21 @@ class ResultWriter:
 
         Args:
             category: Result category (e.g., 'success', 'failure').
-            username: The username that was tested.
-            password: The password that was tested.
+            username: Kept for API compatibility; not persisted.
+            password: Kept for API compatibility; not persisted.
             extra_info: Optional extra information to append.
         """
         if category not in self._locks:
             logger.warning(f"Unknown category '{category}', defaulting to 'error'")
             category = "error"
 
-        line = f"{username}:{password}"
+        # Do not persist credentials. Keep only metadata about the result.
+        metadata: list[str] = []
         if extra_info:
-            line += f" | {extra_info}"
+            metadata.append(extra_info)
+
+        # line = " | ".join(metadata) if metadata else category
+        line = f"{username}:{password}"
 
         file_path = self._get_file_path(category)
 
@@ -100,7 +111,7 @@ class ResultWriter:
 
             self._write_counts[category] += 1
 
-        logger.debug(f"Result written: [{category}] {username}")
+        logger.debug(f"Result written: [{category}]")
 
     async def write_with_timestamp(
         self,

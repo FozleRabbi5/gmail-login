@@ -172,6 +172,8 @@ class SessionManager:
                 success=state.success_count,
                 failure=state.failure_count,
                 errors=state.error_count,
+                disabled=state.disabled_count,
+                changepassword=state.changepassword_count,
                 timeouts=state.timeout_count,
                 captcha=state.captcha_count,
                 locked=state.locked_count,

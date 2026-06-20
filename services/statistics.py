@@ -30,6 +30,8 @@ class StatsSnapshot:
     # Results
     success: int = 0
     failure: int = 0
+    disabled: int = 0
+    changepassword: int = 0
     errors: int = 0
     timeouts: int = 0
     captcha: int = 0
@@ -70,6 +72,8 @@ class StatisticsTracker:
         # Results
         self._success = 0
         self._failure = 0
+        self._disabled = 0
+        self._changepassword = 0
         self._errors = 0
         self._timeouts = 0
         self._captcha = 0
@@ -123,6 +127,8 @@ class StatisticsTracker:
             category_map = {
                 "success": "_success",
                 "failure": "_failure",
+                "disabled": "_disabled",
+                "changepassword": "_changepassword",
                 "error": "_errors",
                 "timeout": "_timeouts",
                 "captcha": "_captcha",
@@ -205,6 +211,8 @@ class StatisticsTracker:
                 percentage=percentage,
                 success=self._success,
                 failure=self._failure,
+                disabled=self._disabled,
+                changepassword=self._changepassword,
                 errors=self._errors,
                 timeouts=self._timeouts,
                 captcha=self._captcha,
@@ -225,6 +233,8 @@ class StatisticsTracker:
             self._processed = 0
             self._success = 0
             self._failure = 0
+            self._disabled = 0
+            self._changepassword = 0
             self._errors = 0
             self._timeouts = 0
             self._captcha = 0
@@ -242,6 +252,8 @@ class StatisticsTracker:
         success: int,
         failure: int,
         errors: int,
+        disabled: int = 0,
+        changepassword: int = 0,
         timeouts: int = 0,
         captcha: int = 0,
         locked: int = 0,
@@ -252,6 +264,8 @@ class StatisticsTracker:
             self._processed = processed
             self._success = success
             self._failure = failure
+            self._disabled = disabled
+            self._changepassword = changepassword
             self._errors = errors
             self._timeouts = timeouts
             self._captcha = captcha

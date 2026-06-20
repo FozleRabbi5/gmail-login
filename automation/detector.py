@@ -25,6 +25,8 @@ class LoginResult(Enum):
 
     SUCCESS = auto()
     FAILURE = auto()
+    DISABLED = auto()
+    CHANGEPASSWORD = auto()
     ERROR = auto()
     TIMEOUT = auto()
     CAPTCHA = auto()
@@ -64,6 +66,15 @@ class URLPatternDetector(BaseDetector):
 
     async def detect(self, page: Page) -> LoginResult | None:
         url = page.url
+        url_lower = url.lower()
+
+        if "disabled" in url_lower:
+            logger.debug(f"URL disabled match: disabled in {url}")
+            return LoginResult.DISABLED
+
+        if "changepassword" in url_lower:
+            logger.debug(f"URL changepassword match: changepassword in {url}")
+            return LoginResult.CHANGEPASSWORD
 
         for pattern in self._success_patterns:
             if pattern.search(url):

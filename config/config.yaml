@@ -70,6 +70,8 @@ output_directory: "results"
 result_categories:
   - "success"
   - "failure"
+  - "disabled"
+  - "changepassword"
   - "error"
   - "timeout"
   - "captcha"
