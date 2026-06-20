@@ -67,10 +67,43 @@ class NavigationHelper:
             logger.error(f"Error filling credentials: {e}")
             return False
 
+    async def _resolve_username_selector(self, page: Page) -> str:
+        """
+        Prefer a real email/username input over the Google identifier field.
+
+        Some pages expose `#identifierId` as an intermediate identifier control.
+        When that happens, we try more conventional username selectors first.
+        """
+        preferred_selectors = [
+            self._username_selector.strip(),
+            "input[type='email']",
+            "input[name='identifier']",
+            "[autocomplete='username']",
+            "#identifierId",
+        ]
+
+        seen: set[str] = set()
+        for selector in preferred_selectors:
+            if not selector or selector in seen:
+                continue
+            seen.add(selector)
+
+            try:
+                locator = page.locator(selector).first
+                if await locator.count() == 0:
+                    continue
+                if await locator.is_visible():
+                    return selector
+            except Exception:
+                continue
+
+        return self._username_selector.strip()
+
     async def _fill_single_step(self, page: Page, username: str, password: str) -> bool:
-        await page.wait_for_selector(self._username_selector, state="visible", timeout=self._timeout_ms)
-        await page.fill(self._username_selector, "")
-        await page.type(self._username_selector, username, delay=random.randint(30, 80))
+        username_selector = await self._resolve_username_selector(page)
+        await page.wait_for_selector(username_selector, state="visible", timeout=self._timeout_ms)
+        await page.fill(username_selector, "")
+        await page.type(username_selector, username, delay=random.randint(30, 80))
         await asyncio.sleep(random.uniform(0.3, 0.8))
         await page.wait_for_selector(self._password_selector, state="visible", timeout=self._timeout_ms)
         await page.fill(self._password_selector, "")
@@ -78,9 +111,10 @@ class NavigationHelper:
         return True
 
     async def _fill_multi_step(self, page: Page, username: str, password: str) -> bool:
-        await page.wait_for_selector(self._username_selector, state="visible", timeout=self._timeout_ms)
-        await page.fill(self._username_selector, "")
-        await page.type(self._username_selector, username, delay=random.randint(30, 80))
+        username_selector = await self._resolve_username_selector(page)
+        await page.wait_for_selector(username_selector, state="visible", timeout=self._timeout_ms)
+        await page.fill(username_selector, "")
+        await page.type(username_selector, username, delay=random.randint(30, 80))
         await asyncio.sleep(random.uniform(0.3, 0.6))
 
         submit_selectors = [s.strip() for s in self._submit_selector.split(",")]

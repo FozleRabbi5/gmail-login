@@ -39,7 +39,7 @@ class Settings(BaseModel):
         description="URL of the login page to test",
     )
     username_selector: str = Field(
-        default="#identifierId",
+        default="input[type='email']",
         description="CSS selector for the username/email input field",
     )
     password_selector: str = Field(
