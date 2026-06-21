@@ -37,6 +37,8 @@ class LoginResult(Enum):
     PHONEVERYIFY = auto()
     VALID_MAIL_TO = auto()
     DELETED = auto()
+    OTHERWEBSITE = auto()
+
 
     @property
     def category(self) -> str:
@@ -76,6 +78,10 @@ class URLPatternDetector(BaseDetector):
         if "inbox" in url_lower or "mail" in url_lower:
             logger.debug(f"URL success match: inbox/mail in {url}")
             return LoginResult.SUCCESS
+        
+        if "google" not in url_lower:
+            logger.debug(f"URL failure match: google not in {url}")
+            return LoginResult.OTHERWEBSITE
 
         if "disabled" in url_lower:
             logger.debug(f"URL disabled match: disabled in {url}")
@@ -116,6 +122,7 @@ class URLPatternDetector(BaseDetector):
                 return LoginResult.FAILURE
 
         return None
+
 
 
 class TitleDetector(BaseDetector):

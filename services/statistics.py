@@ -42,6 +42,7 @@ class StatsSnapshot:
     phoneveryify: int = 0
     valid_mail_to: int = 0
     deleted: int = 0
+    otherwebsite: int = 0
 
     # Workers
     running_workers: int = 0
@@ -90,6 +91,7 @@ class StatisticsTracker:
         self._phoneveryify = 0
         self._valid_mail_to = 0
         self._deleted = 0
+        self._otherwebsite = 0
 
         # Workers
         self._running_workers = 0
@@ -151,6 +153,7 @@ class StatisticsTracker:
                 "phoneveryify": "_phoneveryify",
                 "valid_mail_to": "_valid_mail_to",
                 "deleted": "_deleted",
+                "otherwebsite": "_otherwebsite",
             }
 
             attr = category_map.get(category)
@@ -241,6 +244,7 @@ class StatisticsTracker:
                 phoneveryify=self._phoneveryify,
                 valid_mail_to=self._valid_mail_to,
                 deleted=self._deleted,
+                otherwebsite=self._otherwebsite,
                 running_workers=self._running_workers,
                 browser_count=self._browser_count,
                 avg_speed=round(speed, 2),
@@ -269,6 +273,7 @@ class StatisticsTracker:
             self._phoneveryify = 0
             self._valid_mail_to = 0
             self._deleted = 0
+            self._otherwebsite = 0
             self._start_time = None
             self._accumulated_runtime = 0.0
             self._speed_window.clear()

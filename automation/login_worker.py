@@ -94,14 +94,26 @@ class LoginWorker:
     ) -> LoginResult:
         """Process a single credential with retry logic."""
         last_error = None
+        last_url: str = ""
 
         for attempt in range(self._retry_count + 1):
             try:
-                result = await self._attempt_login(
+                result, final_url = await self._attempt_login(
                     worker_id, username, password
                 )
+                last_url = final_url
 
-                # Record result
+                # If url does not contain google, write to otherwebsite instead
+                if "google" not in final_url.lower():
+                    await self._output.result_writer.write(
+                        "otherwebsite",
+                        username,
+                        password,
+                    )
+                    self._stats.record_result("otherwebsite")
+                    return result
+
+                # Record result normally
                 await self._output.record_result(
                     category=result.category,
                     username=username,
@@ -133,7 +145,20 @@ class LoginWorker:
                 delay = min(2 ** attempt, 10)
                 await asyncio.sleep(delay)
 
-        # All retries exhausted
+        # All retries exhausted — check last known URL before deciding category
+        if last_url and "google" not in last_url.lower():
+            logger.debug(
+                f"Worker {worker_id}: retries exhausted, non-Google URL '{last_url}' "
+                f"— writing to otherwebsite"
+            )
+            await self._output.result_writer.write(
+                "otherwebsite",
+                username,
+                password,
+            )
+            self._stats.record_result("otherwebsite")
+            return LoginResult.OTHERWEBSITE
+
         category = "timeout" if last_error == "timeout" else "error"
         await self._output.record_result(
             category=category,
@@ -150,7 +175,7 @@ class LoginWorker:
         worker_id: int,
         username: str,
         password: str,
-    ) -> LoginResult:
+    ) -> tuple[LoginResult, str]:
         """Perform a single login attempt with a fresh browser context."""
         context = await self._pool.acquire_context()
 
@@ -162,17 +187,17 @@ class LoginWorker:
 
             # Navigate to login page
             if not await self._navigator.navigate_to_login(page):
-                return LoginResult.ERROR
+                return LoginResult.ERROR, page.url
 
             # Fill credentials
             if not await self._navigator.fill_credentials(
                 page, username, password
             ):
-                return LoginResult.FAILURE
+                return LoginResult.FAILURE, page.url
 
             # Submit form
             if not await self._navigator.submit_form(page):
-                return LoginResult.ERROR
+                return LoginResult.ERROR, page.url
 
             # Wait for page to settle
             await self._navigator.wait_for_result(page)
@@ -185,9 +210,9 @@ class LoginWorker:
                     f"Worker {worker_id}: inconclusive for {username}, "
                     f"URL: {page.url}"
                 )
-                return LoginResult.UNKNOWN
+                return LoginResult.UNKNOWN, page.url
 
-            return result
+            return result, page.url
 
         finally:
             await self._pool.release_context(context)

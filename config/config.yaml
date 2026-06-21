@@ -82,6 +82,7 @@ result_categories:
   - "phoneveryify"
   - "valid_mail_to"
   - "deleted"
+  - "otherwebsite"
 
 # --- Logging ---
 log_level: "INFO"

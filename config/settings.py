@@ -127,6 +127,7 @@ class Settings(BaseModel):
             "phoneveryify",
             "valid_mail_to",
             "deleted",
+            "otherwebsite",
         ],
     )
 

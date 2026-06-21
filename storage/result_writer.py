@@ -48,6 +48,7 @@ class ResultWriter:
             "phoneveryify",
             "valid_mail_to",
             "deleted",
+            "otherwebsite",
         ]
         self._locks: dict[str, asyncio.Lock] = {}
         self._write_counts: dict[str, int] = {}
