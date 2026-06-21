@@ -42,6 +42,12 @@ class ResultWriter:
             "timeout",
             "captcha",
             "locked",
+            "unknown",
+            "codeverify",
+            "numberverify",
+            "phoneveryify",
+            "valid_mail_to",
+            "deleted",
         ]
         self._locks: dict[str, asyncio.Lock] = {}
         self._write_counts: dict[str, int] = {}

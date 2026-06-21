@@ -36,6 +36,12 @@ class StatsSnapshot:
     timeouts: int = 0
     captcha: int = 0
     locked: int = 0
+    unknown: int = 0
+    codeverify: int = 0
+    numberverify: int = 0
+    phoneveryify: int = 0
+    valid_mail_to: int = 0
+    deleted: int = 0
 
     # Workers
     running_workers: int = 0
@@ -78,6 +84,12 @@ class StatisticsTracker:
         self._timeouts = 0
         self._captcha = 0
         self._locked = 0
+        self._unknown = 0
+        self._codeverify = 0
+        self._numberverify = 0
+        self._phoneveryify = 0
+        self._valid_mail_to = 0
+        self._deleted = 0
 
         # Workers
         self._running_workers = 0
@@ -133,6 +145,12 @@ class StatisticsTracker:
                 "timeout": "_timeouts",
                 "captcha": "_captcha",
                 "locked": "_locked",
+                "unknown": "_unknown",
+                "codeverify": "_codeverify",
+                "numberverify": "_numberverify",
+                "phoneveryify": "_phoneveryify",
+                "valid_mail_to": "_valid_mail_to",
+                "deleted": "_deleted",
             }
 
             attr = category_map.get(category)
@@ -217,6 +235,12 @@ class StatisticsTracker:
                 timeouts=self._timeouts,
                 captcha=self._captcha,
                 locked=self._locked,
+                unknown=self._unknown,
+                codeverify=self._codeverify,
+                numberverify=self._numberverify,
+                phoneveryify=self._phoneveryify,
+                valid_mail_to=self._valid_mail_to,
+                deleted=self._deleted,
                 running_workers=self._running_workers,
                 browser_count=self._browser_count,
                 avg_speed=round(speed, 2),
@@ -239,6 +263,12 @@ class StatisticsTracker:
             self._timeouts = 0
             self._captcha = 0
             self._locked = 0
+            self._unknown = 0
+            self._codeverify = 0
+            self._numberverify = 0
+            self._phoneveryify = 0
+            self._valid_mail_to = 0
+            self._deleted = 0
             self._start_time = None
             self._accumulated_runtime = 0.0
             self._speed_window.clear()
@@ -257,6 +287,12 @@ class StatisticsTracker:
         timeouts: int = 0,
         captcha: int = 0,
         locked: int = 0,
+        unknown: int = 0,
+        codeverify: int = 0,
+        numberverify: int = 0,
+        phoneveryify: int = 0,
+        valid_mail_to: int = 0,
+        deleted: int = 0,
         runtime: float = 0.0,
     ) -> None:
         """Load statistics from a saved state (for resume)."""
@@ -270,6 +306,12 @@ class StatisticsTracker:
             self._timeouts = timeouts
             self._captcha = captcha
             self._locked = locked
+            self._unknown = unknown
+            self._codeverify = codeverify
+            self._numberverify = numberverify
+            self._phoneveryify = phoneveryify
+            self._valid_mail_to = valid_mail_to
+            self._deleted = deleted
             self._accumulated_runtime = runtime
 
         logger.info(f"Stats loaded from state: {processed} processed")

@@ -121,6 +121,12 @@ class Settings(BaseModel):
             "timeout",
             "captcha",
             "locked",
+            "unknown",
+            "codeverify",
+            "numberverify",
+            "phoneveryify",
+            "valid_mail_to",
+            "deleted",
         ],
     )
 

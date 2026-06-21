@@ -35,6 +35,12 @@ class ApplicationState:
     timeout_count: int = 0
     captcha_count: int = 0
     locked_count: int = 0
+    unknown_count: int = 0
+    codeverify_count: int = 0
+    numberverify_count: int = 0
+    phoneveryify_count: int = 0
+    valid_mail_to_count: int = 0
+    deleted_count: int = 0
 
     # Timing
     start_time: float = 0.0

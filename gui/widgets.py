@@ -153,13 +153,19 @@ class StatsPanel(ttk.LabelFrame):
         metrics = [
             # Group 1: Progress
             [("Total", "total_accounts"), ("Processed", "processed"), ("Remaining", "remaining")],
-            # Group 2: Results
+            # Group 2: Primary results
             [("Success", "success"), ("Failure", "failure"), ("Errors", "errors")],
-            # Group 3: Categories
-            [("Timeouts", "timeouts"), ("Captcha", "captcha"), ("Locked", "locked")],
-            # Group 4: Performance
+            # Group 3: Account states
+            [("Disabled", "disabled"), ("Change Password", "changepassword"), ("Unknown", "unknown")],
+            # Group 4: Verification states
+            [("Code Verify", "codeverify"), ("Number Verify", "numberverify"), ("Phone Verify", "phoneveryify")],
+            # Group 5: Remaining outcomes
+            [("Valid Mail To", "valid_mail_to"), ("Deleted", "deleted"), ("Timeouts", "timeouts")],
+            # Group 6: Safety states
+            [("Captcha", "captcha"), ("Locked", "locked")],
+            # Group 7: Performance
             [("Speed (/s)", "avg_speed"), ("Workers", "running_workers"), ("Browsers", "browser_count")],
-            # Group 5: System
+            # Group 8: System
             [("Queue", "queue_depth"), ("Memory (MB)", "memory_usage_mb"), ("CPU %", "cpu_percent")]
         ]
 
@@ -174,9 +180,8 @@ class StatsPanel(ttk.LabelFrame):
                 style = "MetricValue.TLabel"
                 if key == "success":
                     style = "Success.TLabel"
-                elif key in ("failure", "errors", "timeouts"):
+                elif key in ("failure", "errors", "timeouts", "captcha", "locked"):
                     style = "Error.TLabel"
-                    
                 value_label = ttk.Label(frame, text="0", style=style)
                 value_label.pack(anchor="w")
                 

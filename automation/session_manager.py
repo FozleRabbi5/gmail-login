@@ -177,6 +177,12 @@ class SessionManager:
                 timeouts=state.timeout_count,
                 captcha=state.captcha_count,
                 locked=state.locked_count,
+                unknown=state.unknown_count,
+                codeverify=state.codeverify_count,
+                numberverify=state.numberverify_count,
+                phoneveryify=state.phoneveryify_count,
+                valid_mail_to=state.valid_mail_to_count,
+                deleted=state.deleted_count,
                 runtime=state.total_runtime_seconds,
             )
             logger.info(f"Resuming from line {state.last_processed_line}")

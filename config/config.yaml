@@ -76,6 +76,12 @@ result_categories:
   - "timeout"
   - "captcha"
   - "locked"
+  - "unknown"
+  - "codeverify"
+  - "numberverify"
+  - "phoneveryify"
+  - "valid_mail_to"
+  - "deleted"
 
 # --- Logging ---
 log_level: "INFO"
