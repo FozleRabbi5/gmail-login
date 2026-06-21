@@ -123,7 +123,7 @@ class ConfigPanel(ttk.LabelFrame):
         """Disable all inputs while running."""
         for child in self.winfo_children():
             try:
-                child.configure(state="disabled")
+                child["state"] = "disabled"
             except tk.TclError:
                 pass
 
@@ -133,9 +133,9 @@ class ConfigPanel(ttk.LabelFrame):
             try:
                 # Comboboxes should be readonly, not normal
                 if isinstance(child, ttk.Combobox):
-                    child.configure(state="readonly")
+                    child["state"] = "readonly"
                 else:
-                    child.configure(state="normal")
+                    child["state"] = "normal"
             except tk.TclError:
                 pass
 
