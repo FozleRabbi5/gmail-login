@@ -32,6 +32,11 @@ class LoginResult(Enum):
     CAPTCHA = auto()
     LOCKED = auto()
     UNKNOWN = auto()
+    CODEVERIFY = auto()
+    NUMBERVERIFY = auto()
+    PHONEVERYIFY = auto()
+    VALID_MAIL_TO = auto()
+    DELETED = auto()
 
     @property
     def category(self) -> str:
@@ -68,6 +73,10 @@ class URLPatternDetector(BaseDetector):
         url = page.url
         url_lower = url.lower()
 
+        if "inbox" in url_lower or "mail" in url_lower:
+            logger.debug(f"URL success match: inbox/mail in {url}")
+            return LoginResult.SUCCESS
+
         if "disabled" in url_lower:
             logger.debug(f"URL disabled match: disabled in {url}")
             return LoginResult.DISABLED
@@ -75,6 +84,26 @@ class URLPatternDetector(BaseDetector):
         if "changepassword" in url_lower:
             logger.debug(f"URL changepassword match: changepassword in {url}")
             return LoginResult.CHANGEPASSWORD
+        
+        if "rejected" in url_lower:
+            logger.debug(f"URL failure match: rejected in {url}")
+            return LoginResult.CODEVERIFY
+        
+        if "challenge/pwd" in url_lower:
+            logger.debug(f"URL failure match: challenge/pwd in {url}")
+            return LoginResult.VALID_MAIL_TO
+        
+        if "challenge/dp" in url_lower:
+            logger.debug(f"URL failure match: challenge/dp in {url}")
+            return LoginResult.PHONEVERYIFY
+        
+        if "challenge" in url_lower:
+            logger.debug(f"URL failure match: challenge in {url}")
+            return LoginResult.NUMBERVERIFY
+        
+        if "deletedaccount" in url_lower:
+            logger.debug(f"URL failure match: deletedaccount in {url}")
+            return LoginResult.DELETED
 
         for pattern in self._success_patterns:
             if pattern.search(url):
