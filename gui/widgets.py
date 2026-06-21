@@ -80,7 +80,8 @@ class ConfigPanel(ttk.LabelFrame):
         add_spinbox("Worker Count:", "worker_count", self._settings.worker_count, 1, 100)
         add_spinbox("Timeout (s):", "timeout", self._settings.timeout, 5, 300)
         add_spinbox("Retries:", "retry_count", self._settings.retry_count, 0, 10)
-        add_combo("Browser Type:", "browser_type", self._settings.browser_type, ["chromium", "firefox", "webkit"])
+        # add_combo("Browser Type:", "browser_type", self._settings.browser_type, ["chromium", "firefox", "webkit"])
+        add_combo("Browser Type:", "browser_type", self._settings.browser_type, ["chromium"])
         add_check("Headless Mode", "headless", self._settings.headless)
         
         self.columnconfigure(1, weight=1)
@@ -162,11 +163,11 @@ class StatsPanel(ttk.LabelFrame):
             # Group 5: Remaining outcomes
             [("Valid Mail To", "valid_mail_to"), ("Deleted", "deleted"), ("Timeouts", "timeouts")],
             # Group 6: Safety states
-            [("Captcha", "captcha"), ("Locked", "locked")],
+            # [("Captcha", "captcha"), ("Locked", "locked")],
             # Group 7: Performance
-            [("Speed (/s)", "avg_speed"), ("Workers", "running_workers"), ("Browsers", "browser_count")],
+            # [("Speed (/s)", "avg_speed"), ("Workers", "running_workers"), ("Browsers", "browser_count")],
             # Group 8: System
-            [("Queue", "queue_depth"), ("Memory (MB)", "memory_usage_mb"), ("CPU %", "cpu_percent")]
+            # [("Queue", "queue_depth"), ("Memory (MB)", "memory_usage_mb"), ("CPU %", "cpu_percent")]
         ]
 
         for row_idx, row_metrics in enumerate(metrics):
