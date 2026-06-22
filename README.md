@@ -26,12 +26,47 @@ A high-performance, asynchronous desktop application for automating login tests.
 
 ## Building Executable
 
-To package the application into a standalone executable (Windows or Linux):
+To package the application into a standalone desktop application with the browser binaries bundled inside:
 
+### For Linux / macOS:
 ```bash
-python -m PyInstaller --onefile --windowed app.py
+# 1. Install dependencies
+pip install -r requirements.txt
+
+# 2. Install Playwright Chromium browser locally in the virtual environment / python package folder
+PLAYWRIGHT_BROWSERS_PATH=0 playwright install chromium
+
+# 3. Build the desktop app
+pyinstaller --onedir --windowed --clean app.py
 ```
-The executable will be generated in the `dist/` directory.
+
+### For Windows:
+* **CMD**:
+  ```cmd
+  rem 1. Install dependencies
+  pip install -r requirements.txt
+
+  rem 2. Install Playwright Chromium browser locally in the virtual environment / python package folder
+  set PLAYWRIGHT_BROWSERS_PATH=0
+  playwright install chromium
+
+  rem 3. Build the desktop app
+  pyinstaller --onedir --windowed --clean app.py
+  ```
+* **PowerShell**:
+  ```powershell
+  # 1. Install dependencies
+  pip install -r requirements.txt
+
+  # 2. Install Playwright Chromium browser locally in the virtual environment / python package folder
+  $env:PLAYWRIGHT_BROWSERS_PATH="0"
+  playwright install chromium
+
+  # 3. Build the desktop app
+  pyinstaller --onedir --windowed --clean app.py
+  ```
+
+The standalone application will be generated in the `dist/app/` directory. You can run the executable from there without needing external browser installations.
 
 ## Configuration
 
