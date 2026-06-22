@@ -68,6 +68,16 @@ pyinstaller --onedir --windowed --clean app.py
 
 The standalone application will be generated in the `dist/app/` directory. You can run the executable from there without needing external browser installations.
 
+### Automated Build via GitHub Actions (Recommended for Windows)
+
+If you host this project on GitHub, a CI/CD workflow is configured to automatically package the application for Windows on every push:
+1. Push your changes to GitHub.
+2. Go to the **Actions** tab of your repository.
+3. Click on the latest workflow run (e.g., "Build Desktop Application").
+4. Scroll down to the **Artifacts** section at the bottom.
+5. Download **LoginTester-Windows** (it will be downloaded as a `.zip` file).
+6. Unzip the folder and run `app.exe` directly on Windows!
+
 ## Configuration
 
 Configuration is managed via the GUI or by editing `config/config.yaml`.

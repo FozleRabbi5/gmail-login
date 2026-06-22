@@ -1,0 +1,56 @@
+name: Build Desktop Application
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Windows Executable
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        cache: 'pip'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pyinstaller
+
+    - name: Install Playwright Chromium Browser
+      env:
+        PLAYWRIGHT_BROWSERS_PATH: 0
+      run: |
+        playwright install chromium
+
+    - name: Build with PyInstaller
+      env:
+        PLAYWRIGHT_BROWSERS_PATH: 0
+      run: |
+        pyinstaller --onedir --windowed --clean --noconfirm app.py
+
+    - name: Copy Config and Create Folders
+      run: |
+        New-Item -ItemType Directory -Force -Path dist/app/config
+        Copy-Item -Path config/config.yaml -Destination dist/app/config/config.yaml
+        New-Item -ItemType File -Force -Path dist/app/config/credentials.txt
+        New-Item -ItemType Directory -Force -Path dist/app/results
+        New-Item -ItemType Directory -Force -Path dist/app/logs
+
+    - name: Upload Build Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: LoginTester-Windows
+        path: dist/app/
+        retention-days: 7
