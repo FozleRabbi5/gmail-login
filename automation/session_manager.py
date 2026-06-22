@@ -131,7 +131,7 @@ class SessionManager:
             # Start all components
             await self._checkpoint.start()
             await self._queue_manager.start_producer(
-                start_line=self._output.get_state().last_processed_line + 1
+                start_line=1  # Always start from the first line — no resume/cache
             )
             await self._scheduler.start()
 
@@ -165,27 +165,12 @@ class SessionManager:
         )
         state = await self._output.initialize()
 
-        # Load previous stats if resuming
-        if state.total_processed > 0:
-            self._stats.load_from_state(
-                processed=state.total_processed,
-                success=state.success_count,
-                failure=state.failure_count,
-                errors=state.error_count,
-                disabled=state.disabled_count,
-                changepassword=state.changepassword_count,
-                timeouts=state.timeout_count,
-                captcha=state.captcha_count,
-                locked=state.locked_count,
-                unknown=state.unknown_count,
-                codeverify=state.codeverify_count,
-                numberverify=state.numberverify_count,
-                phoneveryify=state.phoneveryify_count,
-                valid_mail_to=state.valid_mail_to_count,
-                deleted=state.deleted_count,
-                runtime=state.total_runtime_seconds,
-            )
-            logger.info(f"Resuming from line {state.last_processed_line}")
+        # Always start fresh — clear any saved checkpoint so every run
+        # begins from line 1 with zeroed statistics.
+        self._output.state_manager.clear()
+        state = self._output.state_manager.state  # fresh empty state
+
+        logger.info("Starting fresh run from line 1 (no resume/cache)")
 
         # Update state with total lines
         self._output.state_manager.update(total_lines=total_lines)

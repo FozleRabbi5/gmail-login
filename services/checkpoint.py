@@ -56,12 +56,8 @@ class CheckpointManager:
                 logger.error(f"Checkpoint save error: {e}")
 
     def save_now(self) -> None:
-        """Save a checkpoint immediately."""
-        try:
-            self._output.save_checkpoint()
-            logger.debug("Checkpoint saved")
-        except Exception as e:
-            logger.error(f"Failed to save checkpoint: {e}")
+        """Save a checkpoint immediately (no-op)."""
+        pass
 
     async def stop(self) -> None:
         """Stop the periodic checkpoint task and save a final checkpoint."""
@@ -74,6 +70,5 @@ class CheckpointManager:
             except asyncio.CancelledError:
                 pass
 
-        # Final checkpoint
-        self.save_now()
-        logger.info("Checkpoint manager stopped (final checkpoint saved)")
+        # No final save — checkpointing is disabled
+        logger.info("Checkpoint manager stopped (no checkpoint saved)")

@@ -103,6 +103,16 @@ class LoginWorker:
                 )
                 last_url = final_url
 
+                # "deletedaccount" in URL always wins — store in deletedaccount.txt
+                if "deletedaccount" in final_url.lower():
+                    await self._output.result_writer.write(
+                        "deleted",
+                        username,
+                        password,
+                    )
+                    self._stats.record_result("deleted")
+                    return LoginResult.DELETED
+
                 # If url does not contain google, write to otherwebsite instead
                 if "google" not in final_url.lower():
                     await self._output.result_writer.write(
@@ -145,7 +155,33 @@ class LoginWorker:
                 delay = min(2 ** attempt, 10)
                 await asyncio.sleep(delay)
 
+        if last_url and "access-denied" or "admin" in last_url.lower() or "mail" in last_url.lower() or "inbox" in last_url.lower()  :
+            logger.debug(
+                f"Worker {worker_id}: retries exhausted, access-denied URL '{last_url}' "
+                f"— writing to success"
+            )
+            await self._output.result_writer.write(
+                "success",
+                username,
+                password,
+            )
+            self._stats.record_result("success")
+            return LoginResult.SUCCESS
+
         # All retries exhausted — check last known URL before deciding category
+        if last_url and "deletedaccount" in last_url.lower():
+            logger.debug(
+                f"Worker {worker_id}: retries exhausted, deletedaccount URL '{last_url}' "
+                f"— writing to deleted"
+            )
+            await self._output.result_writer.write(
+                "deleted",
+                username,
+                password,
+            )
+            self._stats.record_result("deleted")
+            return LoginResult.DELETED
+
         if last_url and "google" not in last_url.lower():
             logger.debug(
                 f"Worker {worker_id}: retries exhausted, non-Google URL '{last_url}' "
