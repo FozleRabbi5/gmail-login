@@ -156,7 +156,7 @@ class MainWindow(tk.Tk):
             self.on_resume_cb()
 
     def _handle_stop(self) -> None:
-        if dialogs.ask_yes_no("Stop", "Are you sure you want to stop processing?\nA checkpoint will be saved."):
+        if dialogs.ask_yes_no("Stop", "Are you sure you want to stop processing?"):
             if self.on_stop_cb:
                 self.on_stop_cb()
 
@@ -174,8 +174,11 @@ class MainWindow(tk.Tk):
 
     def update_state(self, state_name: str) -> None:
         """Called by app.py when session state changes."""
-        # Must run in main thread
-        self.after(0, self._update_state_ui, state_name)
+        try:
+            if self.winfo_exists():
+                self.after(0, self._update_state_ui, state_name)
+        except Exception:
+            pass
 
     def _update_state_ui(self, state_name: str) -> None:
         self.control_bar.set_state(state_name)
@@ -189,7 +192,11 @@ class MainWindow(tk.Tk):
 
     def update_progress(self, stats: StatsSnapshot, format_eta: Callable, format_runtime: Callable) -> None:
         """Called periodically by app.py with fresh stats."""
-        self.after(0, self._update_progress_ui, stats, format_eta, format_runtime)
+        try:
+            if self.winfo_exists():
+                self.after(0, self._update_progress_ui, stats, format_eta, format_runtime)
+        except Exception:
+            pass
 
     def _update_progress_ui(self, stats: StatsSnapshot, format_eta: Callable, format_runtime: Callable) -> None:
         self.stats_panel.update_stats(stats)
@@ -198,6 +205,8 @@ class MainWindow(tk.Tk):
     def _update_loop(self) -> None:
         """Periodic loop to process logs from the queue."""
         try:
+            if not self.winfo_exists():
+                return
             # Process up to 100 log messages per UI update
             for _ in range(100):
                 level, msg = self.log_queue.get_nowait()
@@ -205,6 +214,11 @@ class MainWindow(tk.Tk):
                 self.log_queue.task_done()
         except queue.Empty:
             pass
+        except Exception:
+            return  # Window destroyed — stop loop
         finally:
-            # Schedule next update
-            self.after(100, self._update_loop)
+            try:
+                if self.winfo_exists():
+                    self.after(100, self._update_loop)
+            except Exception:
+                pass

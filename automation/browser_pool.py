@@ -46,8 +46,8 @@ class BrowserPool:
         max_contexts: int = 5,
         headless: bool = True,
         browser_type: str = "chromium",
-        viewport_width: int = 1280,
-        viewport_height: int = 720,
+        viewport_width: int = 200,
+        viewport_height: int = 220,
     ) -> None:
         self._max_contexts = max_contexts
         self._headless = headless

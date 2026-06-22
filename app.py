@@ -70,22 +70,42 @@ def main():
     # GUI Callbacks
     def on_start(new_settings: Settings):
         nonlocal progress_tracker
+        progress_tracker = None  # reset on each new run
         session_manager.update_settings(new_settings)
         session_manager.start()
 
-        # Set up progress tracking once session starts
-        if session_manager.stats:
-            progress_tracker = ProgressTracker(session_manager.stats)
-            def update_gui(stats):
-                app.update_progress(stats, ProgressTracker.format_eta, ProgressTracker.format_runtime)
-            progress_tracker.register_callback(update_gui)
+        # poll_stats waits until the background thread finishes _initialize()
+        # and sets session_manager.stats, then keeps refreshing every 500 ms.
+        def poll_stats():
+            nonlocal progress_tracker
+            try:
+                # Stop immediately if window was closed
+                if not app.winfo_exists():
+                    return
 
-            # Update GUI periodically (polling)
-            def poll_stats():
-                if session_manager.state in (SessionState.RUNNING, SessionState.PAUSED):
+                # One-time setup: create tracker as soon as stats object is ready
+                if progress_tracker is None and session_manager.stats is not None:
+                    progress_tracker = ProgressTracker(session_manager.stats)
+                    def update_gui(stats):
+                        if app.winfo_exists():
+                            app.update_progress(stats, ProgressTracker.format_eta, ProgressTracker.format_runtime)
+                    progress_tracker.register_callback(update_gui)
+
+                # Push a fresh snapshot to the GUI on every tick
+                if progress_tracker is not None:
                     progress_tracker.update()
+
+                # Keep looping while the session is active
+                if session_manager.state in (SessionState.STARTING, SessionState.RUNNING, SessionState.PAUSED):
                     app.after(500, poll_stats)
-            app.after(500, poll_stats)
+                else:
+                    # One final update so the UI shows the finished numbers
+                    if progress_tracker is not None:
+                        progress_tracker.update()
+            except Exception:
+                pass  # Window may have been destroyed; stop polling silently
+
+        app.after(500, poll_stats)
 
     def on_pause():
         session_manager.pause()

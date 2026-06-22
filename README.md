@@ -29,7 +29,7 @@ A high-performance, asynchronous desktop application for automating login tests.
 To package the application into a standalone executable (Windows or Linux):
 
 ```bash
-pyinstaller build.spec
+python -m PyInstaller --onefile --windowed app.py
 ```
 The executable will be generated in the `dist/` directory.
 

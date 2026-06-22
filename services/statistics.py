@@ -187,9 +187,10 @@ class StatisticsTracker:
         return (len(window) - 1) / time_span
 
     def _calculate_eta(self, speed: float) -> float:
-        """Calculate estimated time to completion in seconds."""
-        with self._lock:
-            remaining = self._total_accounts - self._processed
+        """Calculate estimated time to completion in seconds.
+        NOTE: Must be called while self._lock is already held.
+        """
+        remaining = self._total_accounts - self._processed
         if speed <= 0 or remaining <= 0:
             return 0.0
         return remaining / speed
