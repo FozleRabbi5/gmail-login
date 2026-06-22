@@ -128,6 +128,7 @@ class Settings(BaseModel):
             "valid_mail_to",
             "deleted",
             "otherwebsite",
+            "iaccepted",
         ],
     )
 

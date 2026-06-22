@@ -83,6 +83,7 @@ result_categories:
   - "valid_mail_to"
   - "deleted"
   - "otherwebsite"
+  - "iaccepted"
 
 # --- Logging ---
 log_level: "INFO"

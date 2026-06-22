@@ -38,6 +38,7 @@ class LoginResult(Enum):
     VALID_MAIL_TO = auto()
     DELETED = auto()
     OTHERWEBSITE = auto()
+    IACCEPTED = auto()
 
 
     @property
@@ -74,6 +75,10 @@ class URLPatternDetector(BaseDetector):
     async def detect(self, page: Page) -> LoginResult | None:
         url = page.url
         url_lower = url.lower()
+
+        if "workspacetermsofservice" in url_lower:
+            logger.debug(f"URL failure match: workspacetermsofservice in {url}")
+            return LoginResult.IACCEPTED
  
         if "inbox" in url_lower or "mail" in url_lower or "u/0/" in url_lower or "admin" in url_lower or "access-denied" in url_lower:
             logger.debug(f"URL success match: inbox/mail in {url}")

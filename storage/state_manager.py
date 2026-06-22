@@ -41,6 +41,7 @@ class ApplicationState:
     phoneveryify_count: int = 0
     valid_mail_to_count: int = 0
     deleted_count: int = 0
+    iaccepted_count: int = 0
 
     # Timing
     start_time: float = 0.0

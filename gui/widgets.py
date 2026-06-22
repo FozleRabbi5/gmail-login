@@ -163,7 +163,7 @@ class StatsPanel(ttk.LabelFrame):
             # Group 5: Remaining outcomes
             [("Valid Mail To", "valid_mail_to"), ("Deleted", "deleted"), ("Timeouts", "timeouts")],
             # Group 6: Safety states
-            # [("Captcha", "captcha"), ("Locked", "locked")],
+            [("I Accepted", "iaccepted")],
             # Group 7: Performance
             # [("Speed (/s)", "avg_speed"), ("Workers", "running_workers"), ("Browsers", "browser_count")],
             # Group 8: System

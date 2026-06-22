@@ -49,6 +49,7 @@ class ResultWriter:
             "valid_mail_to",
             "deleted",
             "otherwebsite",
+            "iaccepted",
         ]
         self._locks: dict[str, asyncio.Lock] = {}
         self._write_counts: dict[str, int] = {}
