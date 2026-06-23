@@ -6,8 +6,15 @@ Sets up logging.
 
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
+
+# Redirect stdout and stderr to devnull if they are None (common in PyInstaller --windowed/--noconsole mode)
+if sys.stdout is None:
+    sys.stdout = open(os.devnull, "w")
+if sys.stderr is None:
+    sys.stderr = open(os.devnull, "w")
 
 from loguru import logger
 

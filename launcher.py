@@ -4,8 +4,15 @@ Handles setup for frozen environments (like checking _MEIPASS).
 """
 
 import multiprocessing
+import os
 import sys
 from pathlib import Path
+
+# Redirect stdout and stderr to devnull if they are None (common in PyInstaller --windowed/--noconsole mode)
+if sys.stdout is None:
+    sys.stdout = open(os.devnull, "w")
+if sys.stderr is None:
+    sys.stderr = open(os.devnull, "w")
 
 # Important for PyInstaller multiprocessing support
 multiprocessing.freeze_support()
