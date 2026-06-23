@@ -14,6 +14,9 @@ if sys.stdout is None:
 if sys.stderr is None:
     sys.stderr = open(os.devnull, "w")
 
+# Force Playwright to look for browsers inside the bundled application folder
+os.environ["PLAYWRIGHT_BROWSERS_PATH"] = "0"
+
 # Important for PyInstaller multiprocessing support
 multiprocessing.freeze_support()
 

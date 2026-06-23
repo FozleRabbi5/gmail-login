@@ -38,7 +38,7 @@ jobs:
       env:
         PLAYWRIGHT_BROWSERS_PATH: 0
       run: |
-        pyinstaller --onedir --windowed --clean --noconfirm app.py
+        pyinstaller --onedir --windowed --clean --noconfirm --name app --collect-all playwright launcher.py
 
     - name: Copy Config and Create Folders
       run: |
