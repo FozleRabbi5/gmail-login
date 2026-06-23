@@ -86,7 +86,7 @@ class SessionManager:
     def _set_state(self, new_state: SessionState) -> None:
         old = self._state
         self._state = new_state
-        logger.info(f"Session state: {old.name} → {new_state.name}")
+        logger.info(f"Session state: {old.name} -> {new_state.name}")
         for cb in self._state_callbacks:
             try:
                 cb(new_state)

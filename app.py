@@ -58,6 +58,7 @@ def setup_logging(gui_queue=None, log_dir="logs", level="INFO"):
         retention=5,
         level="DEBUG",  # Always log debug to file
         format="{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {name}:{function}:{line} | {message}",
+        encoding="utf-8",
     )
 
     # GUI handler
