@@ -109,7 +109,14 @@ class SessionManager:
 
     def _run_event_loop(self) -> None:
         """Create and run the async event loop in the background thread."""
-        self._loop = asyncio.new_event_loop()
+        # On Windows, background threads default to SelectorEventLoop which does NOT
+        # support subprocesses. Playwright requires ProactorEventLoop to communicate
+        # with the browser process via subprocess pipes.
+        import sys
+        if sys.platform == "win32":
+            self._loop = asyncio.ProactorEventLoop()
+        else:
+            self._loop = asyncio.new_event_loop()
         asyncio.set_event_loop(self._loop)
 
         try:
