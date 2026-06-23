@@ -8,7 +8,9 @@ All settings are validated at startup to fail fast on misconfiguration.
 from __future__ import annotations
 
 import os
+import sys
 from pathlib import Path
+
 from typing import Any
 
 import yaml
@@ -174,8 +176,15 @@ class Settings(BaseModel):
             Validated Settings instance.
         """
         if config_path is None:
-            # Look relative to the project root
-            config_path = Path(__file__).parent / "config.yaml"
+            # In a frozen PyInstaller build, __file__ points inside _internal/
+            # (the temp extraction dir). The actual config lives next to the .exe.
+            # For normal development runs, look next to this file as before.
+            if getattr(sys, "frozen", False):
+                config_path = Path(sys.executable).parent / "config" / "config.yaml"
+
+            else:
+                config_path = Path(__file__).parent / "config.yaml"
+
         else:
             config_path = Path(config_path)
 

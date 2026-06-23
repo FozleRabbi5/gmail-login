@@ -10,16 +10,19 @@ import os
 import sys
 from pathlib import Path
 
-# Redirect stdout and stderr to devnull if they are None (common in PyInstaller --windowed/--noconsole mode)
+# ── Silence None streams (PyInstaller --windowed on Windows) ────────────────
+# Must happen before ANY other import that might write to stderr/stdout.
 if sys.stdout is None:
     sys.stdout = open(os.devnull, "w")
 if sys.stderr is None:
     sys.stderr = open(os.devnull, "w")
 
-# Force Playwright to look for browsers inside the bundled application folder
-os.environ["PLAYWRIGHT_BROWSERS_PATH"] = "0"
+# ── Tell Playwright where browsers are (fallback if not already set) ─────────
+# launcher.py sets this first; this guard covers direct "python app.py" runs.
+if "PLAYWRIGHT_BROWSERS_PATH" not in os.environ:
+    os.environ["PLAYWRIGHT_BROWSERS_PATH"] = "0"
 
-# Important for PyInstaller multiprocessing support
+# ── PyInstaller multiprocessing support ────────────────────────────────────
 import multiprocessing
 multiprocessing.freeze_support()
 

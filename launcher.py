@@ -8,34 +8,37 @@ import os
 import sys
 from pathlib import Path
 
-# Redirect stdout and stderr to devnull if they are None (common in PyInstaller --windowed/--noconsole mode)
+# ── Step 1: Silence None streams BEFORE any other import ────────────────────
+# In --windowed / --noconsole PyInstaller builds on Windows, Python sets
+# sys.stdout and sys.stderr to None.  Libraries like loguru will crash if
+# they try to write to None, so redirect them to devnull first.
 if sys.stdout is None:
     sys.stdout = open(os.devnull, "w")
 if sys.stderr is None:
     sys.stderr = open(os.devnull, "w")
 
-# Force Playwright to look for browsers inside the bundled application folder
+# ── Step 2: Fix the working directory BEFORE any relative-path import ───────
+# PyInstaller extracts to a temp _MEIPASS dir but the .exe lives in dist/app/.
+# We want CWD = the folder that contains app.exe so that config/, logs/, and
+# results/ are resolved correctly at runtime.
+if getattr(sys, "frozen", False):
+    _exe_dir = Path(sys.executable).parent
+else:
+    _exe_dir = Path(__file__).resolve().parent
+os.chdir(_exe_dir)
+
+# ── Step 3: Tell Playwright where browsers live ──────────────────────────────
+# PLAYWRIGHT_BROWSERS_PATH=0 makes Playwright look inside its own package dir
+# (i.e. inside _internal/playwright/driver/package/.local-browsers/) which is
+# exactly where PyInstaller bundles them when --collect-all playwright is used.
 os.environ["PLAYWRIGHT_BROWSERS_PATH"] = "0"
 
-# Important for PyInstaller multiprocessing support
+# ── Step 4: Required for frozen multiprocessing on Windows ───────────────────
 multiprocessing.freeze_support()
 
 
-def main():
-    """Launcher entry point."""
-    # Ensure current directory is where the executable is
-    if getattr(sys, 'frozen', False):
-        exe_dir = Path(sys.executable).parent
-    else:
-        exe_dir = Path(__file__).parent
-        
-    import os
-    os.chdir(exe_dir)
-    
-    # Import and run app
+if __name__ == "__main__":
+    # Import app only after all env vars and CWD are set
     from app import main as run_app
     run_app()
 
-
-if __name__ == "__main__":
-    main()
